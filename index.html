@@ -225,7 +225,6 @@
       const userVal = document.getElementById('loginUser').value.trim().toLowerCase();
       const passVal = document.getElementById('loginPass').value.trim();
 
-      // Acceso directo de respaldo local para darlinnyc
       if (userVal === 'darlinnyc' && passVal === '0707') {
         currentUser = { username: 'darlinnyc', role: 'owner' };
         sessionStorage.setItem('susanoo_user', JSON.stringify(currentUser));
@@ -343,9 +342,10 @@
       const val = document.getElementById('newTokenInput').value.trim();
       if (!val || !_supabase) return;
 
-      const { error } = await _supabase.from('tokens').insert([{ token: val }]);
+      const generatedId = Math.floor(Date.now() % 2147483647);
+      const { error } = await _supabase.from('tokens').insert([{ id: generatedId, token: val }]);
       if (error) {
-        alert("Error adding token. It may already exist.");
+        alert("Error adding token. Details: " + error.message);
       } else {
         document.getElementById('newTokenInput').value = '';
         closeModal();
@@ -365,6 +365,7 @@
       }
     }
 
+    // CREACIÓN DE USUARIOS CON ID AUTOGENERADO POR EL CÓDIGO
     async function createUserAccount() {
       if (currentUser.role !== 'owner') return;
 
@@ -377,9 +378,15 @@
         return;
       }
 
-      const { error } = await _supabase.from('users').insert([{ username: u, password: p, role: r }]);
+      // Generar ID único numérico automáticamente para evitar conflictos con Supabase
+      const generatedId = Math.floor(Date.now() % 2147483647);
+
+      const { error } = await _supabase.from('users').insert([
+        { id: generatedId, username: u, password: p, role: r }
+      ]);
+
       if (error) {
-        alert("Error creating account. Username might already be taken.");
+        alert("Error creating account: " + error.message);
       } else {
         alert(`Account '${u}' created successfully as ${r.toUpperCase()}!`);
         document.getElementById('newUsername').value = '';
