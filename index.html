@@ -3,25 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Susanoo v7 | Secure Database Dashboard</title>
+  <title>Susanoo v7 | Database Numbers & Licenses</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts for Intimidating/Cool Style -->
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Orbitron & Creepster -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
+          fontFamily: {
+            susanoo: ['Orbitron', 'sans-serif'],
+            scary: ['Creepster', 'cursive']
+          },
           colors: {
             border: '#27272a',
             bgDark: '#09090b',
             cardDark: '#18181b',
-            accent: '#ef4444',
-          },
-          fontFamily: {
-            susanoo: ['Cinzel', 'serif'],
-            sans: ['Inter', 'sans-serif'],
+            accent: '#3b82f6',
+            sharingan: '#ef4444'
           }
         }
       }
@@ -31,27 +34,33 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .glow-red {
+      text-shadow: 0 0 15px rgba(239, 68, 68, 0.8), 0 0 30px rgba(185, 28, 28, 0.6);
+    }
+    .box-glow {
+      box-shadow: 0 0 25px -5px rgba(239, 68, 68, 0.3);
+    }
+  </style>
 </head>
 <body class="bg-bgDark text-zinc-100 font-sans antialiased min-h-screen flex flex-col selection:bg-red-600 selection:text-white">
 
   <!-- ==================== LOGIN VIEW ==================== -->
   <div id="loginView" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-    
-    <!-- Background Glow Effect -->
-    <div class="absolute w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none -top-20 -left-20"></div>
-    <div class="absolute w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none -bottom-20 -right-20"></div>
+    <!-- Dark aura background effect -->
+    <div class="absolute w-[500px] h-[500px] bg-red-900/20 rounded-full blur-3xl -z-10 pointer-events-none"></div>
 
-    <div class="bg-cardDark border border-border rounded-2xl p-8 w-full max-w-md shadow-2xl backdrop-blur relative z-10">
+    <div class="bg-cardDark border border-zinc-800 rounded-2xl p-8 w-full max-w-md shadow-2xl backdrop-blur box-glow relative">
       
       <!-- Logo Header -->
-      <div class="text-center mb-8">
-        <div class="relative w-24 h-24 mx-auto mb-4 rounded-full p-1 bg-gradient-to-tr from-red-600 via-purple-600 to-indigo-600 shadow-xl shadow-red-600/20">
+      <div class="text-center mb-6">
+        <div class="relative w-24 h-24 mx-auto mb-4 rounded-full p-1 bg-gradient-to-tr from-red-600 via-purple-600 to-red-900 shadow-lg shadow-red-600/30">
           <img src="https://i.pinimg.com/736x/60/05/ea/6005ea8bab7ff1c1328a0d3eb00726aa.jpg" alt="Logo" class="w-full h-full object-cover rounded-full border-2 border-bgDark">
         </div>
-        <h1 class="text-3xl font-black tracking-wider text-white font-susanoo uppercase bg-gradient-to-r from-red-500 via-rose-400 to-orange-500 bg-clip-text text-transparent drop-shadow-[0_2px_10px_rgba(239,68,68,0.3)]">
-          Susanoo v7
-        </h1>
-        <p class="text-xs text-zinc-400 mt-2 font-medium">Bienvenido a la base de datos de Susanoo v7</p>
+        
+        <!-- Susanoo v7 Intimidating Title -->
+        <h1 class="text-3xl font-black font-susanoo tracking-wider text-red-500 glow-red uppercase">Susanoo v7</h1>
+        <p class="text-xs text-zinc-400 mt-2 font-medium">Welcome to the Susanoo v7 Database System</p>
       </div>
 
       <!-- Login Form -->
@@ -60,7 +69,7 @@
           <label class="block text-xs font-medium text-zinc-400 mb-1">Username</label>
           <div class="relative">
             <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs"></i>
-            <input type="text" id="loginUser" placeholder="admin" required class="w-full bg-bgDark border border-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-red-500 transition">
+            <input type="text" id="loginUser" placeholder="Enter your username" required class="w-full bg-bgDark border border-zinc-800 rounded-lg pl-9 pr-4 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-red-600 transition">
           </div>
         </div>
 
@@ -68,26 +77,29 @@
           <label class="block text-xs font-medium text-zinc-400 mb-1">Password</label>
           <div class="relative">
             <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs"></i>
-            <input type="password" id="loginPass" placeholder="••••••••" required class="w-full bg-bgDark border border-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-red-500 transition">
+            <input type="password" id="loginPass" placeholder="••••••••" required class="w-full bg-bgDark border border-zinc-800 rounded-lg pl-9 pr-4 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-red-600 transition">
           </div>
         </div>
 
         <div id="loginError" class="hidden text-xs text-red-400 text-center bg-red-500/10 border border-red-500/20 py-2 rounded-lg">
-          Credenciales inválidas o usuario no registrado.
+          Invalid username or password. Please try again.
         </div>
 
-        <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold py-2.5 rounded-lg text-sm transition shadow-lg shadow-red-600/20 active:scale-[0.99]">
+        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-sm transition shadow-lg shadow-red-600/30 active:scale-[0.99] font-susanoo tracking-wider">
           Sign In
         </button>
       </form>
 
-      <!-- Footer Credits & Owner Button -->
-      <div class="mt-6 pt-4 border-t border-border flex items-center justify-between text-xs">
-        <span class="text-zinc-500">Dev: <strong class="text-zinc-400">@DarlinNyc</strong></span>
-        <a href="https://t.me/DarlinNyc" target="_blank" class="bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 px-3 py-1.5 rounded-lg transition font-medium flex items-center gap-1.5">
-          <i class="fa-brands fa-telegram"></i> Owner
+      <!-- Owner / Developer Credits & Telegram Link -->
+      <div class="mt-8 pt-6 border-t border-zinc-800/80 text-center flex flex-col items-center gap-2">
+        <p class="text-xs text-zinc-400 font-medium">
+          Developer & Owner: <span class="text-red-400 font-bold">@Darlinnyc</span>
+        </p>
+        <a href="https://t.me/DarlinNyc" target="_blank" class="inline-flex items-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-700 px-4 py-2 rounded-xl text-xs font-semibold transition shadow-md active:scale-95">
+          <i class="fa-brands fa-telegram text-sky-400 text-sm"></i> Contact Owner
         </a>
       </div>
+
     </div>
   </div>
 
@@ -96,22 +108,22 @@
   <div id="dashboardView" class="hidden min-h-screen flex-col">
     
     <!-- Top Navigation Header -->
-    <header class="border-b border-border bg-cardDark/60 backdrop-blur sticky top-0 z-40 px-6 py-3.5 flex items-center justify-between">
+    <header class="border-b border-zinc-800 bg-cardDark/80 backdrop-blur sticky top-0 z-40 px-6 py-3.5 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <img src="https://i.pinimg.com/736x/60/05/ea/6005ea8bab7ff1c1328a0d3eb00726aa.jpg" alt="Logo" class="w-8 h-8 rounded-full border border-zinc-700 object-cover">
+        <img src="https://i.pinimg.com/736x/60/05/ea/6005ea8bab7ff1c1328a0d3eb00726aa.jpg" alt="Logo" class="w-9 h-9 rounded-full border border-red-600/50 object-cover">
         <div>
-          <span class="font-bold text-sm tracking-tight text-white font-susanoo">Susanoo v7</span>
-          <span class="text-[10px] text-zinc-400 block -mt-1" id="userRoleBadge">Role: Loading...</span>
+          <span class="font-bold text-sm tracking-wide text-red-500 font-susanoo block">Susanoo v7</span>
+          <span class="text-[10px] text-zinc-400 block -mt-1">Database & Multi-Role Manager</span>
         </div>
       </div>
 
-      <div class="flex items-center space-x-3">
-        <!-- Owner Quick Button -->
-        <a href="https://t.me/DarlinNyc" target="_blank" class="text-xs text-blue-400 bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 font-medium">
-          <i class="fa-brands fa-telegram"></i> Owner
-        </a>
-        <div id="ownerMenuBtnContainer"></div>
-        <button onclick="handleLogout()" class="text-xs text-zinc-400 hover:text-white bg-zinc-800/80 hover:bg-zinc-700 border border-zinc-700 px-3 py-1.5 rounded-lg transition flex items-center gap-2">
+      <div class="flex items-center space-x-4">
+        <!-- Current User Role Badge -->
+        <div id="userBadge" class="hidden sm:flex items-center text-xs px-3 py-1 rounded-full font-mono uppercase border">
+          <!-- Injected via JS -->
+        </div>
+
+        <button onclick="handleLogout()" class="text-xs text-zinc-400 hover:text-white bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-3 py-1.5 rounded-lg transition flex items-center gap-2">
           <i class="fa-solid fa-right-from-bracket text-xs"></i> Logout
         </button>
       </div>
@@ -123,35 +135,38 @@
       <!-- Dashboard Title Block -->
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 class="text-2xl font-bold tracking-tight text-white font-susanoo">Susanoo v7 Dashboard</h1>
-          <p class="text-xs text-zinc-400 mt-0.5">Control de tokens, números autorizados y gestión de usuarios del sistema.</p>
+          <h1 class="text-2xl font-bold tracking-tight text-white font-susanoo">License Dashboard</h1>
+          <p class="text-xs text-zinc-400 mt-0.5">Manage active user tokens, phone numbers, and authorization keys.</p>
         </div>
         <div class="flex items-center gap-3">
-          <button id="addUserBtn" onclick="openUserModal()" class="hidden bg-purple-600 hover:bg-purple-500 text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition flex items-center gap-2 shadow-lg shadow-purple-600/20 active:scale-95">
-            <i class="fa-solid fa-user-plus text-xs"></i> Crear Usuario
+          <!-- Button to create users (OWNER ONLY) -->
+          <button id="btnCreateUser" onclick="openUserModal()" class="hidden bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition items-center gap-2 shadow-lg shadow-purple-600/20 active:scale-95">
+            <i class="fa-solid fa-user-plus text-xs"></i> Create Account
           </button>
-          <button onclick="openTokenModal()" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition flex items-center gap-2 shadow-lg shadow-red-600/20 active:scale-95">
+
+          <!-- Button to add tokens (OWNER & PARTNER) -->
+          <button onclick="openModal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition flex items-center gap-2 shadow-lg shadow-red-600/20 active:scale-95">
             <i class="fa-solid fa-plus text-xs"></i> Add New Token
           </button>
         </div>
       </div>
 
       <!-- Controls & Live Search -->
-      <div class="bg-cardDark border border-border rounded-xl p-4 mb-6 flex flex-col sm:flex-row gap-4 justify-between items-center">
+      <div class="bg-cardDark border border-zinc-800 rounded-xl p-4 mb-6 flex flex-col sm:flex-row gap-4 justify-between items-center">
         <div class="relative w-full sm:w-80">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs"></i>
-          <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Buscar token o ID..." class="w-full bg-bgDark border border-border rounded-lg pl-9 pr-4 py-2 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-red-500 transition">
+          <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search token or ID..." class="w-full bg-bgDark border border-zinc-800 rounded-lg pl-9 pr-4 py-2 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-red-600 transition">
         </div>
         <div class="text-xs text-zinc-400">
-          Total Licenses: <span id="totalCount" class="font-semibold text-zinc-100 bg-zinc-800 px-2 py-0.5 rounded-md border border-zinc-700">0</span>
+          Total Licenses: <span id="totalCount" class="font-semibold text-zinc-100 bg-zinc-900 px-2 py-0.5 rounded-md border border-zinc-800">0</span>
         </div>
       </div>
 
       <!-- Data Table -->
-      <div class="bg-cardDark border border-border rounded-xl overflow-hidden shadow-2xl">
+      <div class="bg-cardDark border border-zinc-800 rounded-xl overflow-hidden shadow-2xl">
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
-            <thead class="bg-zinc-900/80 border-b border-border text-zinc-400 uppercase text-[10px] tracking-wider">
+            <thead class="bg-zinc-900/80 border-b border-zinc-800 text-zinc-400 uppercase text-[10px] tracking-wider">
               <tr>
                 <th class="py-3.5 px-6">ID</th>
                 <th class="py-3.5 px-6">Token / Phone Number</th>
@@ -159,7 +174,7 @@
                 <th class="py-3.5 px-6 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody id="tableBody" class="divide-y divide-border text-zinc-300">
+            <tbody id="tableBody" class="divide-y divide-zinc-800 text-zinc-300">
               <!-- Dynamic Rows inserted via JavaScript -->
             </tbody>
           </table>
@@ -172,27 +187,27 @@
 
 
   <!-- ==================== ADD TOKEN MODAL ==================== -->
-  <div id="addTokenModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-    <div class="bg-cardDark border border-border rounded-2xl p-6 w-full max-w-md shadow-2xl transform transition-all">
+  <div id="addModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-cardDark border border-zinc-800 rounded-2xl p-6 w-full max-w-md shadow-2xl">
       <div class="flex items-center justify-between mb-4">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
+        <h3 class="text-base font-bold text-white flex items-center gap-2 font-susanoo">
           <i class="fa-solid fa-key text-red-500"></i> Add New License Token
         </h3>
-        <button onclick="closeTokenModal()" class="text-zinc-500 hover:text-white transition">
+        <button onclick="closeModal()" class="text-zinc-500 hover:text-white transition">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <p class="text-xs text-zinc-400 mb-4">Ingresa un token o número telefónico válido para autorizar el bot.</p>
+      <p class="text-xs text-zinc-400 mb-4">Enter a unique token ID or phone number to grant bot access.</p>
 
       <div class="mb-5">
         <label class="block text-xs font-medium text-zinc-400 mb-1">Token String / Phone Number</label>
-        <input type="text" id="newTokenInput" placeholder="ej. 18298571078 o TOKEN-01" class="w-full bg-bgDark border border-border rounded-lg px-3.5 py-2.5 text-xs text-zinc-200 focus:outline-none focus:border-red-500 transition font-mono">
+        <input type="text" id="newTokenInput" placeholder="e.g. +18095550199 or TOKEN-USER-01" class="w-full bg-bgDark border border-zinc-800 rounded-lg px-3.5 py-2.5 text-xs text-zinc-200 focus:outline-none focus:border-red-600 transition font-mono">
       </div>
 
       <div class="flex justify-end gap-3">
-        <button onclick="closeTokenModal()" class="px-4 py-2 text-xs font-medium text-zinc-400 hover:text-white transition">Cancel</button>
-        <button onclick="addEntry()" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg text-xs font-semibold transition shadow-lg shadow-red-600/20">Save License</button>
+        <button onclick="closeModal()" class="px-4 py-2 text-xs font-medium text-zinc-400 hover:text-white transition">Cancel</button>
+        <button onclick="addEntry()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-xs font-semibold transition shadow-lg shadow-red-600/20">Save License</button>
       </div>
     </div>
   </div>
@@ -200,39 +215,41 @@
 
   <!-- ==================== CREATE USER MODAL (OWNER ONLY) ==================== -->
   <div id="addUserModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-    <div class="bg-cardDark border border-border rounded-2xl p-6 w-full max-w-md shadow-2xl transform transition-all">
+    <div class="bg-cardDark border border-zinc-800 rounded-2xl p-6 w-full max-w-md shadow-2xl">
       <div class="flex items-center justify-between mb-4">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-user-shield text-purple-500"></i> Crear Nuevo Usuario
+        <h3 class="text-base font-bold text-white flex items-center gap-2 font-susanoo">
+          <i class="fa-solid fa-user-shield text-purple-500"></i> Create New Account
         </h3>
         <button onclick="closeUserModal()" class="text-zinc-500 hover:text-white transition">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <p class="text-xs text-zinc-400 mb-4">Crea una cuenta asignando un rol de Owner o Partner.</p>
+      <p class="text-xs text-zinc-400 mb-4">Register a new user and assign them Owner or Partner privileges.</p>
 
       <div class="space-y-4 mb-5">
         <div>
-          <label class="block text-xs font-medium text-zinc-400 mb-1">Nuevo Username</label>
-          <input type="text" id="newUsernameInput" placeholder="usuario_nuevo" class="w-full bg-bgDark border border-border rounded-lg px-3.5 py-2.5 text-xs text-zinc-200 focus:outline-none focus:border-purple-500 transition">
+          <label class="block text-xs font-medium text-zinc-400 mb-1">Username</label>
+          <input type="text" id="newUsername" placeholder="e.g. partner_john" class="w-full bg-bgDark border border-zinc-800 rounded-lg px-3.5 py-2.5 text-xs text-zinc-200 focus:outline-none focus:border-purple-500 transition">
         </div>
+
         <div>
-          <label class="block text-xs font-medium text-zinc-400 mb-1">Contraseña</label>
-          <input type="password" id="newPasswordInput" placeholder="••••••••" class="w-full bg-bgDark border border-border rounded-lg px-3.5 py-2.5 text-xs text-zinc-200 focus:outline-none focus:border-purple-500 transition">
+          <label class="block text-xs font-medium text-zinc-400 mb-1">Password</label>
+          <input type="password" id="newPassword" placeholder="••••••••" class="w-full bg-bgDark border border-zinc-800 rounded-lg px-3.5 py-2.5 text-xs text-zinc-200 focus:outline-none focus:border-purple-500 transition">
         </div>
+
         <div>
-          <label class="block text-xs font-medium text-zinc-400 mb-1">Rol del Sistema</label>
-          <select id="newUserRoleSelect" class="w-full bg-bgDark border border-border rounded-lg px-3.5 py-2.5 text-xs text-zinc-200 focus:outline-none focus:border-purple-500 transition">
-            <option value="partner">Partner (Solo puede añadir tokens)</option>
-            <option value="owner">Owner (Acceso total, añadir y eliminar)</option>
+          <label class="block text-xs font-medium text-zinc-400 mb-1">Role Type</label>
+          <select id="newRole" class="w-full bg-bgDark border border-zinc-800 rounded-lg px-3.5 py-2.5 text-xs text-zinc-200 focus:outline-none focus:border-purple-500 transition">
+            <option value="owner">Owner (Full Control: Add, Delete & Create Accounts)</option>
+            <option value="partner">Partner (Add Tokens Only, Cannot Delete)</option>
           </select>
         </div>
       </div>
 
       <div class="flex justify-end gap-3">
         <button onclick="closeUserModal()" class="px-4 py-2 text-xs font-medium text-zinc-400 hover:text-white transition">Cancel</button>
-        <button onclick="createNewUser()" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg text-xs font-semibold transition shadow-lg shadow-purple-600/20">Crear Cuenta</button>
+        <button onclick="createUserAccount()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-xs font-semibold transition shadow-lg shadow-purple-600/20">Create Account</button>
       </div>
     </div>
   </div>
@@ -246,41 +263,48 @@
     
     const _supabase = window.supabase ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
+    let currentUser = null; // Holds logged in user object { username, role }
+
     // Check login state on load
     window.addEventListener('DOMContentLoaded', () => {
-      if (sessionStorage.getItem('isLoggedIn') === 'true') {
+      const savedUser = sessionStorage.getItem('susanoo_user');
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
         showDashboard();
       }
     });
 
     async function handleLogin(e) {
       e.preventDefault();
-      const user = document.getElementById('loginUser').value.trim();
-      const pass = document.getElementById('loginPass').value.trim();
+      const userVal = document.getElementById('loginUser').value.trim().toLowerCase();
+      const passVal = document.getElementById('loginPass').value.trim();
 
-      if (!_supabase) return;
+      if (!_supabase) {
+        alert("Database connection error.");
+        return;
+      }
 
-      // Consultar la tabla 'users' en Supabase
+      // Query 'users' table in Supabase
       const { data, error } = await _supabase
         .from('users')
         .select('*')
-        .eq('username', user)
-        .eq('password', pass)
+        .ilike('username', userVal)
+        .eq('password', passVal)
         .maybeSingle();
 
       if (error || !data) {
         document.getElementById('loginError').classList.remove('hidden');
       } else {
+        currentUser = { username: data.username, role: data.role };
+        sessionStorage.setItem('susanoo_user', JSON.stringify(currentUser));
         document.getElementById('loginError').classList.add('hidden');
-        sessionStorage.setItem('isLoggedIn', 'true');
-        sessionStorage.setItem('currentUsername', data.username);
-        sessionStorage.setItem('currentUserRole', data.role); // 'owner' o 'partner'
         showDashboard();
       }
     }
 
     function handleLogout() {
-      sessionStorage.clear();
+      sessionStorage.removeItem('susanoo_user');
+      currentUser = null;
       document.getElementById('dashboardView').classList.add('hidden');
       document.getElementById('dashboardView').classList.remove('flex');
       document.getElementById('loginView').classList.remove('hidden');
@@ -291,34 +315,36 @@
       document.getElementById('dashboardView').classList.remove('hidden');
       document.getElementById('dashboardView').classList.add('flex');
 
-      const role = sessionStorage.getItem('currentUserRole') || 'partner';
-      const username = sessionStorage.getItem('currentUsername') || 'User';
-
-      document.getElementById('userRoleBadge').innerText = `User: ${username} (${role.toUpperCase()})`;
-
-      // Si es owner, mostrar botón de crear usuarios
-      if (role === 'owner') {
-        document.getElementById('addUserBtn').classList.remove('hidden');
+      // Update Role Badge
+      const badge = document.getElementById('userBadge');
+      badge.classList.remove('hidden');
+      if (currentUser.role === 'owner') {
+        badge.className = "flex items-center text-xs px-3 py-1 rounded-full font-mono uppercase border bg-red-500/10 text-red-400 border-red-500/30";
+        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500 mr-2 animate-pulse"></span> Owner: ${currentUser.username}`;
+        document.getElementById('btnCreateUser').classList.remove('hidden');
+        document.getElementById('btnCreateUser').classList.add('flex');
       } else {
-        document.getElementById('addUserBtn').classList.add('hidden');
+        badge.className = "flex items-center text-xs px-3 py-1 rounded-full font-mono uppercase border bg-amber-500/10 text-amber-400 border-amber-500/30";
+        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 mr-2"></span> Partner: ${currentUser.username}`;
+        document.getElementById('btnCreateUser').classList.add('hidden');
+        document.getElementById('btnCreateUser').classList.remove('flex');
       }
 
       loadData();
     }
 
-    // Modal Operations
-    function openTokenModal() { document.getElementById('addTokenModal').classList.remove('hidden'); }
-    function closeTokenModal() { document.getElementById('addTokenModal').classList.add('hidden'); }
+    // Modal Controls
+    function openModal() { document.getElementById('addModal').classList.remove('hidden'); }
+    function closeModal() { document.getElementById('addModal').classList.add('hidden'); }
 
     function openUserModal() { document.getElementById('addUserModal').classList.remove('hidden'); }
     function closeUserModal() { document.getElementById('addUserModal').classList.add('hidden'); }
 
-    // Fetch and render data from Supabase
+    // Fetch and render tokens from Supabase
     async function loadData() {
       const tbody = document.getElementById('tableBody');
       if (!_supabase) return;
       
-      const role = sessionStorage.getItem('currentUserRole') || 'partner';
       const { data, error } = await _supabase.from('tokens').select('*').order('id', { ascending: false });
       
       if (error || !data || data.length === 0) {
@@ -330,18 +356,9 @@
       document.getElementById('totalCount').innerText = data.length;
       tbody.innerHTML = '';
 
-      data.forEach(item => {
-        // Si es partner, no puede eliminar (se oculta el botón de basura)
-        let deleteBtnHtml = '';
-        if (role === 'owner') {
-          deleteBtnHtml = `
-            <button onclick="deleteEntry('${item.token}')" title="Delete Token" class="text-zinc-500 hover:text-red-400 transition p-1">
-              <i class="fa-solid fa-trash-can text-xs"></i>
-            </button>`;
-        } else {
-          deleteBtnHtml = `<span class="text-[10px] text-zinc-600 italic">Solo lectura</span>`;
-        }
+      const isOwner = currentUser && currentUser.role === 'owner';
 
+      data.forEach(item => {
         tbody.innerHTML += `
           <tr class="hover:bg-zinc-800/40 transition group">
             <td class="py-4 px-6 text-zinc-500 font-mono">#${item.id || 'N/A'}</td>
@@ -357,7 +374,15 @@
               <button onclick="copyToken('${item.token}')" title="Copy Token" class="text-zinc-500 hover:text-blue-400 transition p-1">
                 <i class="fa-regular fa-copy text-xs"></i>
               </button>
-              ${deleteBtnHtml}
+              ${
+                isOwner ? `
+                  <button onclick="deleteEntry('${item.token}')" title="Delete Token" class="text-zinc-500 hover:text-red-400 transition p-1">
+                    <i class="fa-solid fa-trash-can text-xs"></i>
+                  </button>
+                ` : `
+                  <span class="text-[10px] text-zinc-600 font-mono italic">Protected</span>
+                `
+              }
             </td>
           </tr>
         `;
@@ -373,50 +398,50 @@
         alert("Error adding token. It may already exist.");
       } else {
         document.getElementById('newTokenInput').value = '';
-        closeTokenModal();
+        closeModal();
         loadData();
       }
     }
 
     async function deleteEntry(tokenVal) {
-      const role = sessionStorage.getItem('currentUserRole');
-      if (role !== 'owner') {
-        alert("Acceso denegado: Solo los usuarios con rol Owner pueden eliminar tokens.");
+      if (currentUser.role !== 'owner') {
+        alert("Only Owners can delete tokens!");
         return;
       }
 
-      if (confirm(`¿Estás seguro de revocar la licencia '${tokenVal}'?`) && _supabase) {
+      if (confirm(`Are you sure you want to revoke license '${tokenVal}'?`) && _supabase) {
         await _supabase.from('tokens').delete().eq('token', tokenVal);
         loadData();
       }
     }
 
-    async function createNewUser() {
-      const username = document.getElementById('newUsernameInput').value.trim();
-      const password = document.getElementById('newPasswordInput').value.trim();
-      const role = document.getElementById('newUserRoleSelect').value;
+    // Create User Account (Owner Only)
+    async function createUserAccount() {
+      if (currentUser.role !== 'owner') return;
 
-      if (!username || !password) {
-        alert("Por favor completa todos los campos.");
+      const u = document.getElementById('newUsername').value.trim().toLowerCase();
+      const p = document.getElementById('newPassword').value.trim();
+      const r = document.getElementById('newRole').value;
+
+      if (!u || !p) {
+        alert("Please complete username and password.");
         return;
       }
 
-      if (!_supabase) return;
-
-      const { error } = await _supabase.from('users').insert([{ username, password, role }]);
+      const { error } = await _supabase.from('users').insert([{ username: u, password: p, role: r }]);
       if (error) {
-        alert("Error al crear usuario. El nombre de usuario ya podría existir.");
+        alert("Error creating account. Username might already be taken.");
       } else {
-        alert("¡Usuario creado exitosamente!");
-        document.getElementById('newUsernameInput').value = '';
-        document.getElementById('newPasswordInput').value = '';
+        alert(`Account '${u}' created successfully as ${r.toUpperCase()}!`);
+        document.getElementById('newUsername').value = '';
+        document.getElementById('newPassword').value = '';
         closeUserModal();
       }
     }
 
     function copyToken(val) {
       navigator.clipboard.writeText(val);
-      alert(`Token copiado: ${val}`);
+      alert(`Token copied: ${val}`);
     }
 
     function filterTable() {
