@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Database Numbers & Licenses | Admin Dashboard</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            border: '#27272a',
+            bgDark: '#09090b',
+            cardDark: '#18181b',
+            accent: '#3b82f6',
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-bgDark text-zinc-100 font-sans antialiased min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
+
+  <!-- ==================== LOGIN VIEW ==================== -->
+  <div id="loginView" class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-cardDark border border-border rounded-2xl p-8 w-full max-w-md shadow-2xl backdrop-blur">
+      
+      <!-- Logo Header -->
+      <div class="text-center mb-8">
+        <div class="relative w-24 h-24 mx-auto mb-4 rounded-full p-1 bg-gradient-to-tr from-blue-600 to-indigo-500 shadow-lg shadow-blue-500/20">
+          <img src="https://i.pinimg.com/736x/60/05/ea/6005ea8bab7ff1c1328a0d3eb00726aa.jpg" alt="Logo" class="w-full h-full object-cover rounded-full border-2 border-bgDark">
+        </div>
+        <h1 class="text-2xl font-bold tracking-tight text-white">Welcome Back</h1>
+        <p class="text-xs text-zinc-400 mt-1">Sign in to manage your Database Numbers & Tokens</p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1">Username or Email</label>
+          <div class="relative">
+            <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs"></i>
+            <input type="text" id="loginUser" placeholder="admin" required class="w-full bg-bgDark border border-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-blue-500 transition">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1">Password</label>
+          <div class="relative">
+            <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs"></i>
+            <input type="password" id="loginPass" placeholder="••••••••" required class="w-full bg-bgDark border border-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-blue-500 transition">
+          </div>
+        </div>
+
+        <div id="loginError" class="hidden text-xs text-red-400 text-center bg-red-500/10 border border-red-500/20 py-2 rounded-lg">
+          Invalid credentials. Please try again.
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg text-sm transition shadow-lg shadow-blue-600/20 active:scale-[0.99]">
+          Sign In
+        </button>
+      </form>
+
+      <div class="mt-6 text-center">
+        <p class="text-[11px] text-zinc-500">Protected System &bull; Database Numbers v1.0</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== DASHBOARD VIEW ==================== -->
+  <div id="dashboardView" class="hidden min-h-screen flex-col">
+    
+    <!-- Top Navigation Header -->
+    <header class="border-b border-border bg-cardDark/60 backdrop-blur sticky top-0 z-40 px-6 py-3.5 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <img src="https://i.pinimg.com/736x/60/05/ea/6005ea8bab7ff1c1328a0d3eb00726aa.jpg" alt="Logo" class="w-8 h-8 rounded-full border border-zinc-700 object-cover">
+        <div>
+          <span class="font-bold text-sm tracking-tight text-white block">Database Numbers</span>
+          <span class="text-[10px] text-zinc-400 block -mt-1">License & Token Manager</span>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <div class="hidden sm:flex items-center text-xs text-zinc-400 bg-zinc-900 border border-zinc-800 px-3 py-1 rounded-full">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
+          Connected to Supabase
+        </div>
+        <button onclick="handleLogout()" class="text-xs text-zinc-400 hover:text-white bg-zinc-800/80 hover:bg-zinc-700 border border-zinc-700 px-3 py-1.5 rounded-lg transition flex items-center gap-2">
+          <i class="fa-solid fa-right-from-bracket text-xs"></i> Logout
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-6xl w-full mx-auto p-6">
+      
+      <!-- Dashboard Title Block -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight text-white">License Dashboard</h1>
+          <p class="text-xs text-zinc-400 mt-0.5">Manage active user tokens, phone numbers, and bot authorization keys.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition flex items-center gap-2 shadow-lg shadow-blue-600/20 active:scale-95">
+            <i class="fa-solid fa-plus text-xs"></i> Add New Token
+          </button>
+        </div>
+      </div>
+
+      <!-- Controls & Live Search -->
+      <div class="bg-cardDark border border-border rounded-xl p-4 mb-6 flex flex-col sm:flex-row gap-4 justify-between items-center">
+        <div class="relative w-full sm:w-80">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs"></i>
+          <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search token or ID..." class="w-full bg-bgDark border border-border rounded-lg pl-9 pr-4 py-2 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-blue-500 transition">
+        </div>
+        <div class="text-xs text-zinc-400">
+          Total Licenses: <span id="totalCount" class="font-semibold text-zinc-100 bg-zinc-800 px-2 py-0.5 rounded-md border border-zinc-700">0</span>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="bg-cardDark border border-border rounded-xl overflow-hidden shadow-2xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-zinc-900/80 border-b border-border text-zinc-400 uppercase text-[10px] tracking-wider">
+              <tr>
+                <th class="py-3.5 px-6">ID</th>
+                <th class="py-3.5 px-6">Token / Phone Number</th>
+                <th class="py-3.5 px-6">Status</th>
+                <th class="py-3.5 px-6 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody" class="divide-y divide-border text-zinc-300">
+              <!-- Dynamic Rows inserted via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+
+  <!-- ==================== ADD TOKEN MODAL ==================== -->
+  <div id="addModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-cardDark border border-border rounded-2xl p-6 w-full max-w-md shadow-2xl transform transition-all">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-key text-blue-500"></i> Add New License Token
+        </h3>
+        <button onclick="closeModal()" class="text-zinc-500 hover:text-white transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-zinc-400 mb-4">Enter a unique token ID or phone number to grant bot access.</p>
+
+      <div class="mb-5">
+        <label class="block text-xs font-medium text-zinc-400 mb-1">Token String / Phone Number</label>
+        <input type="text" id="newTokenInput" placeholder="e.g. +18095550199 or TOKEN-USER-01" class="w-full bg-bgDark border border-border rounded-lg px-3.5 py-2.5 text-xs text-zinc-200 focus:outline-none focus:border-blue-500 transition font-mono">
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <button onclick="closeModal()" class="px-4 py-2 text-xs font-medium text-zinc-400 hover:text-white transition">Cancel</button>
+        <button onclick="addEntry()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-xs font-semibold transition shadow-lg shadow-blue-600/20">Save License</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <script>
+    // 1. SUPABASE CONFIGURATION
+    const SUPABASE_URL = "https://gtxeaneksjfqatileziy.supabase.co";
+    const SUPABASE_KEY = "TU_PUBLISHABLE_KEY_AQUI"; // Coloca tu Publishable (anon) key de Supabase
+    
+    const _supabase = window.supabase ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+    // 2. DEFAULT CREDENTIALS (Personalízalos si deseas)
+    const AUTH_USER = "admin";
+    const AUTH_PASS = "admin123";
+
+    // Check login state on load
+    window.addEventListener('DOMContentLoaded', () => {
+      if (sessionStorage.getItem('isLoggedIn') === 'true') {
+        showDashboard();
+      }
+    });
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('loginUser').value.trim();
+      const pass = document.getElementById('loginPass').value.trim();
+
+      if (user === AUTH_USER && pass === AUTH_PASS) {
+        sessionStorage.setItem('isLoggedIn', 'true');
+        document.getElementById('loginError').classList.add('hidden');
+        showDashboard();
+      } else {
+        document.getElementById('loginError').classList.remove('hidden');
+      }
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem('isLoggedIn');
+      document.getElementById('dashboardView').classList.add('hidden');
+      document.getElementById('dashboardView').classList.remove('flex');
+      document.getElementById('loginView').classList.remove('hidden');
+    }
+
+    function showDashboard() {
+      document.getElementById('loginView').classList.add('hidden');
+      document.getElementById('dashboardView').classList.remove('hidden');
+      document.getElementById('dashboardView').classList.add('flex');
+      loadData();
+    }
+
+    // Modal Operations
+    function openModal() { document.getElementById('addModal').classList.remove('hidden'); }
+    function closeModal() { document.getElementById('addModal').classList.add('hidden'); }
+
+    // Fetch and render data from Supabase
+    async function loadData() {
+      const tbody = document.getElementById('tableBody');
+      if (!_supabase) return;
+      
+      const { data, error } = await _supabase.from('tokens').select('*').order('id', { ascending: false });
+      
+      if (error || !data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-zinc-500 font-mono text-xs">No active tokens found in database.</td></tr>`;
+        document.getElementById('totalCount').innerText = '0';
+        return;
+      }
+
+      document.getElementById('totalCount').innerText = data.length;
+      tbody.innerHTML = '';
+
+      data.forEach(item => {
+        tbody.innerHTML += `
+          <tr class="hover:bg-zinc-800/40 transition group">
+            <td class="py-4 px-6 text-zinc-500 font-mono">#${item.id || 'N/A'}</td>
+            <td class="py-4 px-6 font-mono text-zinc-200 font-medium">
+              <span class="bg-zinc-900 border border-zinc-800 px-2.5 py-1 rounded-md text-xs">${item.token}</span>
+            </td>
+            <td class="py-4 px-6">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span> Active
+              </span>
+            </td>
+            <td class="py-4 px-6 text-right space-x-2">
+              <button onclick="copyToken('${item.token}')" title="Copy Token" class="text-zinc-500 hover:text-blue-400 transition p-1">
+                <i class="fa-regular fa-copy text-xs"></i>
+              </button>
+              <button onclick="deleteEntry('${item.token}')" title="Delete Token" class="text-zinc-500 hover:text-red-400 transition p-1">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    async function addEntry() {
+      const val = document.getElementById('newTokenInput').value.trim();
+      if (!val || !_supabase) return;
+
+      const { error } = await _supabase.from('tokens').insert([{ token: val }]);
+      if (error) {
+        alert("Error adding token. It may already exist.");
+      } else {
+        document.getElementById('newTokenInput').value = '';
+        closeModal();
+        loadData();
+      }
+    }
+
+    async function deleteEntry(tokenVal) {
+      if (confirm(`Are you sure you want to revoke license '${tokenVal}'?`) && _supabase) {
+        await _supabase.from('tokens').delete().eq('token', tokenVal);
+        loadData();
+      }
+    }
+
+    function copyToken(val) {
+      navigator.clipboard.writeText(val);
+      alert(`Token copied: ${val}`);
+    }
+
+    function filterTable() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const rows = document.querySelectorAll('#tableBody tr');
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
+      });
+    }
+  </script>
+
+</body>
+</html>
