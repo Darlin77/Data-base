@@ -171,44 +171,37 @@
     </div>
   </div>
 
-  <!-- CREATE USER MODAL -->
+  <!-- CREATE USER INFO MODAL -->
   <div id="addUserModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div class="bg-cardDark border border-zinc-800 rounded-2xl p-6 w-full max-w-md shadow-2xl">
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-base font-bold text-white flex items-center gap-2 font-susanoo">
-          <i class="fa-solid fa-user-shield text-purple-500"></i> Create New Account
+          <i class="fa-solid fa-user-shield text-purple-500"></i> Accounts Info
         </h3>
-        <button onclick="closeUserModal()" class="text-zinc-500 hover:text-white transition"><i class="fa-solid fa-xmark"></i></button>
+        <button onclick="closeUserModal()" class="text-zinc-500 hover:text-white transition"><i class="fa-solid id="xmark"></i></button>
       </div>
-      <p class="text-xs text-zinc-400 mb-4">Register a new user and assign them Owner or Partner privileges.</p>
-      <div class="space-y-4 mb-5">
-        <div>
-          <label class="block text-xs font-medium text-zinc-400 mb-1">Username</label>
-          <input type="text" id="newUsername" placeholder="e.g. partner_john" class="w-full bg-bgDark border border-zinc-800 rounded-lg px-3.5 py-2.5 text-xs text-zinc-200 focus:outline-none focus:border-purple-500 transition">
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-zinc-400 mb-1">Password</label>
-          <input type="password" id="newPassword" placeholder="••••••••" class="w-full bg-bgDark border border-zinc-800 rounded-lg px-3.5 py-2.5 text-xs text-zinc-200 focus:outline-none focus:border-purple-500 transition">
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-zinc-400 mb-1">Role Type</label>
-          <select id="newRole" class="w-full bg-bgDark border border-zinc-800 rounded-lg px-3.5 py-2.5 text-xs text-zinc-200 focus:outline-none focus:border-purple-500 transition">
-            <option value="owner">Owner (Full Control)</option>
-            <option value="partner">Partner (Add Tokens Only)</option>
-          </select>
-        </div>
+      <p class="text-xs text-zinc-400 mb-4">Las cuentas del sistema están configuradas directamente en el código para máxima seguridad y velocidad.</p>
+      <div class="bg-bgDark p-3 rounded-lg border border-zinc-800 text-xs font-mono text-zinc-300 space-y-2 mb-4">
+        <div>👤 <strong class="text-red-400">darlinnyc</strong> (Owner)</div>
+        <div>👤 <strong class="text-purple-400">demon</strong> (Partner - Pass: 0000)</div>
       </div>
-      <div class="flex justify-end gap-3">
-        <button onclick="closeUserModal()" class="px-4 py-2 text-xs font-medium text-zinc-400 hover:text-white transition">Cancel</button>
-        <button onclick="createUserAccount()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-xs font-semibold transition shadow-lg shadow-purple-600/20">Create Account</button>
+      <div class="flex justify-end">
+        <button onclick="closeUserModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-xs font-semibold transition">Entendido</button>
       </div>
     </div>
   </div>
 
   <script>
+    // Configuración de Supabase (exclusiva para la tabla de tokens/licencias que ya funciona)
     const SUPABASE_URL = "https://gtxeaneksjfqatileziy.supabase.co";
     const SUPABASE_KEY = "sb_publishable_4m_uUPN9F8zhFsRBjB1j2w_87Cg8gcB";
     const _supabase = window.supabase ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+    // Lista fija de usuarios permitidos (Owner y Partners)
+    const systemUsers = [
+      { username: 'darlinnyc', password: '0707', role: 'owner' },
+      { username: 'demon', password: '0000', role: 'partner' }
+    ];
 
     let currentUser = null;
 
@@ -225,33 +218,15 @@
       const userVal = document.getElementById('loginUser').value.trim().toLowerCase();
       const passVal = document.getElementById('loginPass').value.trim();
 
-      if (userVal === 'darlinnyc' && passVal === '0707') {
-        currentUser = { username: 'darlinnyc', role: 'owner' };
+      // Buscar en la lista de usuarios predefinidos
+      const found = systemUsers.find(u => u.username === userVal && u.password === passVal);
+
+      if (found) {
+        currentUser = { username: found.username, role: found.role };
         sessionStorage.setItem('susanoo_user', JSON.stringify(currentUser));
         document.getElementById('loginError').classList.add('hidden');
         showDashboard();
         return;
-      }
-
-      if (_supabase) {
-        try {
-          const { data, error } = await _supabase
-            .from('users')
-            .select('*')
-            .ilike('username', userVal)
-            .eq('password', passVal)
-            .maybeSingle();
-
-          if (!error && data) {
-            currentUser = { username: data.username, role: data.role };
-            sessionStorage.setItem('susanoo_user', JSON.stringify(currentUser));
-            document.getElementById('loginError').classList.add('hidden');
-            showDashboard();
-            return;
-          }
-        } catch (err) {
-          console.error(err);
-        }
       }
 
       document.getElementById('loginError').classList.remove('hidden');
@@ -362,36 +337,6 @@
       if (confirm(`Are you sure you want to revoke license '${tokenVal}'?`) && _supabase) {
         await _supabase.from('tokens').delete().eq('token', tokenVal);
         loadData();
-      }
-    }
-
-    // CREACIÓN DE USUARIOS CON ID AUTOGENERADO POR EL CÓDIGO
-    async function createUserAccount() {
-      if (currentUser.role !== 'owner') return;
-
-      const u = document.getElementById('newUsername').value.trim().toLowerCase();
-      const p = document.getElementById('newPassword').value.trim();
-      const r = document.getElementById('newRole').value;
-
-      if (!u || !p) {
-        alert("Please complete username and password.");
-        return;
-      }
-
-      // Generar ID único numérico automáticamente para evitar conflictos con Supabase
-      const generatedId = Math.floor(Date.now() % 2147483647);
-
-      const { error } = await _supabase.from('users').insert([
-        { id: generatedId, username: u, password: p, role: r }
-      ]);
-
-      if (error) {
-        alert("Error creating account: " + error.message);
-      } else {
-        alert(`Account '${u}' created successfully as ${r.toUpperCase()}!`);
-        document.getElementById('newUsername').value = '';
-        document.getElementById('newPassword').value = '';
-        closeUserModal();
       }
     }
 
