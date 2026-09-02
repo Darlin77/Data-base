@@ -98,8 +98,11 @@
         </div>
       </div>
 
-      <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-3">
         <div id="userBadge" class="hidden sm:flex items-center text-xs px-3 py-1 rounded-full font-mono uppercase border"></div>
+        <button onclick="switchSubMenu('device')" class="text-xs text-zinc-300 hover:text-white bg-red-600/20 hover:bg-red-600/30 border border-red-500/40 px-3 py-1.5 rounded-lg transition flex items-center gap-2">
+          <i class="fa-solid fa-mobile-screen-button text-red-400 text-xs"></i> Device Info
+        </button>
         <button onclick="handleLogout()" class="text-xs text-zinc-400 hover:text-white bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-3 py-1.5 rounded-lg transition flex items-center gap-2">
           <i class="fa-solid fa-right-from-bracket text-xs"></i> Logout
         </button>
@@ -107,44 +110,134 @@
     </header>
 
     <main class="flex-1 max-w-6xl w-full mx-auto p-6">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 class="text-2xl font-bold tracking-tight text-white font-susanoo">License Dashboard</h1>
-          <p class="text-xs text-zinc-400 mt-0.5">Manage active user tokens, phone numbers, and authorization keys.</p>
+      <!-- MAIN LICENSES PANEL -->
+      <div id="mainLicensesPanel">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <div>
+            <h1 class="text-2xl font-bold tracking-tight text-white font-susanoo">License Dashboard</h1>
+            <p class="text-xs text-zinc-400 mt-0.5">Manage active user tokens, phone numbers, and authorization keys.</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button id="btnCreateUser" onclick="openUserModal()" class="hidden bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition items-center gap-2 shadow-lg shadow-purple-600/20 active:scale-95">
+              <i class="fa-solid fa-user-plus text-xs"></i> Accounts Info
+            </button>
+            <button onclick="openModal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition flex items-center gap-2 shadow-lg shadow-red-600/20 active:scale-95">
+              <i class="fa-solid fa-plus text-xs"></i> Add New Token
+            </button>
+          </div>
         </div>
-        <div class="flex items-center gap-3">
-          <button id="btnCreateUser" onclick="openUserModal()" class="hidden bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition items-center gap-2 shadow-lg shadow-purple-600/20 active:scale-95">
-            <i class="fa-solid fa-user-plus text-xs"></i> Create Account
-          </button>
-          <button onclick="openModal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition flex items-center gap-2 shadow-lg shadow-red-600/20 active:scale-95">
-            <i class="fa-solid fa-plus text-xs"></i> Add New Token
-          </button>
+
+        <div class="bg-cardDark border border-zinc-800 rounded-xl p-4 mb-6 flex flex-col sm:flex-row gap-4 justify-between items-center">
+          <div class="relative w-full sm:w-80">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs"></i>
+            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search token or ID..." class="w-full bg-bgDark border border-zinc-800 rounded-lg pl-9 pr-4 py-2 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-red-600 transition">
+          </div>
+          <div class="text-xs text-zinc-400">
+            Total Licenses: <span id="totalCount" class="font-semibold text-zinc-100 bg-zinc-900 px-2 py-0.5 rounded-md border border-zinc-800">0</span>
+          </div>
+        </div>
+
+        <div class="bg-cardDark border border-zinc-800 rounded-xl overflow-hidden shadow-2xl">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-zinc-900/80 border-b border-zinc-800 text-zinc-400 uppercase text-[10px] tracking-wider">
+                <tr>
+                  <th class="py-3.5 px-6">ID</th>
+                  <th class="py-3.5 px-6">Token / Phone Number</th>
+                  <th class="py-3.5 px-6">Status</th>
+                  <th class="py-3.5 px-6 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody" class="divide-y divide-zinc-800 text-zinc-300"></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      <div class="bg-cardDark border border-zinc-800 rounded-xl p-4 mb-6 flex flex-col sm:flex-row gap-4 justify-between items-center">
-        <div class="relative w-full sm:w-80">
-          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs"></i>
-          <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search token or ID..." class="w-full bg-bgDark border border-zinc-800 rounded-lg pl-9 pr-4 py-2 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-red-600 transition">
+      <!-- DEVICE & NETWORK INFO PANEL (NEW SUB-MENU) -->
+      <div id="deviceInfoPanel" class="hidden">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h1 class="text-2xl font-bold tracking-tight text-white font-susanoo">Hardware & Network Telemetry</h1>
+            <p class="text-xs text-zinc-400 mt-0.5">Real-time device diagnostics, battery state, and connection status.</p>
+          </div>
+          <button onclick="switchSubMenu('main')" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 px-4 py-2.5 rounded-xl text-xs font-semibold transition flex items-center gap-2 active:scale-95">
+            <i class="fa-solid fa-arrow-left text-xs"></i> Back to Main Menu
+          </button>
         </div>
-        <div class="text-xs text-zinc-400">
-          Total Licenses: <span id="totalCount" class="font-semibold text-zinc-100 bg-zinc-900 px-2 py-0.5 rounded-md border border-zinc-800">0</span>
-        </div>
-      </div>
 
-      <div class="bg-cardDark border border-zinc-800 rounded-xl overflow-hidden shadow-2xl">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-zinc-900/80 border-b border-zinc-800 text-zinc-400 uppercase text-[10px] tracking-wider">
-              <tr>
-                <th class="py-3.5 px-6">ID</th>
-                <th class="py-3.5 px-6">Token / Phone Number</th>
-                <th class="py-3.5 px-6">Status</th>
-                <th class="py-3.5 px-6 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody" class="divide-y divide-zinc-800 text-zinc-300"></tbody>
-          </table>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Network / IP Info Card -->
+          <div class="bg-cardDark border border-zinc-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+            <div class="absolute -right-6 -bottom-6 text-zinc-800/40 text-7xl -z-10">
+              <i class="fa-solid fa-globe"></i>
+            </div>
+            <h3 class="text-sm font-bold text-red-500 uppercase font-susanoo mb-4 flex items-center gap-2">
+              <i class="fa-solid fa-network-wired text-xs"></i> Network & IP Address
+            </h3>
+            <div class="space-y-3 text-xs font-mono">
+              <div class="flex justify-between py-2 border-b border-zinc-800/80">
+                <span class="text-zinc-500">Public IP:</span>
+                <span id="infoIp" class="text-zinc-200 font-semibold">Loading telemetry...</span>
+              </div>
+              <div class="flex justify-between py-2 border-b border-zinc-800/80">
+                <span class="text-zinc-500">Connection Type:</span>
+                <span id="infoConnectionType" class="text-zinc-200">Detecting...</span>
+              </div>
+              <div class="flex justify-between py-2">
+                <span class="text-zinc-500">Online Status:</span>
+                <span id="infoOnlineStatus" class="text-emerald-400 font-semibold">Online</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Battery Info Card -->
+          <div class="bg-cardDark border border-zinc-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+            <div class="absolute -right-6 -bottom-6 text-zinc-800/40 text-7xl -z-10">
+              <i class="fa-solid fa-battery-half"></i>
+            </div>
+            <h3 class="text-sm font-bold text-red-500 uppercase font-susanoo mb-4 flex items-center gap-2">
+              <i class="fa-solid fa-bolt text-xs"></i> Battery Status
+            </h3>
+            <div class="space-y-3 text-xs font-mono">
+              <div class="flex justify-between py-2 border-b border-zinc-800/80">
+                <span class="text-zinc-500">Charge Level:</span>
+                <span id="infoBatteryLevel" class="text-zinc-200 font-semibold">Checking...</span>
+              </div>
+              <div class="flex justify-between py-2 border-b border-zinc-800/80">
+                <span class="text-zinc-500">Charging State:</span>
+                <span id="infoBatteryCharging" class="text-zinc-200">Unknown</span>
+              </div>
+              <div class="flex justify-between py-2">
+                <span class="text-zinc-500">Power Mode:</span>
+                <span class="text-zinc-300">Standard</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hardware & OS Info Card -->
+          <div class="bg-cardDark border border-zinc-800 rounded-2xl p-6 shadow-xl md:col-span-2 relative overflow-hidden">
+            <div class="absolute -right-4 -bottom-4 text-zinc-800/40 text-7xl -z-10">
+              <i class="fa-solid fa-microchip"></i>
+            </div>
+            <h3 class="text-sm font-bold text-red-500 uppercase font-susanoo mb-4 flex items-center gap-2">
+              <i class="fa-solid fa-mobile-screen text-xs"></i> Hardware & System OS
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
+              <div class="bg-bgDark p-3 rounded-xl border border-zinc-800">
+                <span class="text-zinc-500 block mb-1">Brand / Platform:</span>
+                <span id="infoPlatform" class="text-zinc-200 font-semibold">Analyzing...</span>
+              </div>
+              <div class="bg-bgDark p-3 rounded-xl border border-zinc-800">
+                <span class="text-zinc-500 block mb-1">OS Version / Android:</span>
+                <span id="infoOsVersion" class="text-zinc-200 font-semibold">Detecting...</span>
+              </div>
+              <div class="bg-bgDark p-3 rounded-xl border border-zinc-800">
+                <span class="text-zinc-500 block mb-1">Browser Engine:</span>
+                <span id="infoUserAgent" class="text-zinc-200 truncate block">Detecting...</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </main>
@@ -178,7 +271,7 @@
         <h3 class="text-base font-bold text-white flex items-center gap-2 font-susanoo">
           <i class="fa-solid fa-user-shield text-purple-500"></i> Accounts Info
         </h3>
-        <button onclick="closeUserModal()" class="text-zinc-500 hover:text-white transition"><i class="fa-solid id="xmark"></i></button>
+        <button onclick="closeUserModal()" class="text-zinc-500 hover:text-white transition"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <p class="text-xs text-zinc-400 mb-4">Las cuentas del sistema están configuradas directamente en el código para máxima seguridad y velocidad.</p>
       <div class="bg-bgDark p-3 rounded-lg border border-zinc-800 text-xs font-mono text-zinc-300 space-y-2 mb-4">
@@ -192,12 +285,10 @@
   </div>
 
   <script>
-    // Configuración de Supabase (exclusiva para la tabla de tokens/licencias que ya funciona)
     const SUPABASE_URL = "https://gtxeaneksjfqatileziy.supabase.co";
     const SUPABASE_KEY = "sb_publishable_4m_uUPN9F8zhFsRBjB1j2w_87Cg8gcB";
     const _supabase = window.supabase ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-    // Lista fija de usuarios permitidos (Owner y Partners)
     const systemUsers = [
       { username: 'darlinnyc', password: '0707', role: 'owner' },
       { username: 'demon', password: '0000', role: 'partner' }
@@ -218,7 +309,6 @@
       const userVal = document.getElementById('loginUser').value.trim().toLowerCase();
       const passVal = document.getElementById('loginPass').value.trim();
 
-      // Buscar en la lista de usuarios predefinidos
       const found = systemUsers.find(u => u.username === userVal && u.password === passVal);
 
       if (found) {
@@ -260,6 +350,89 @@
       }
 
       loadData();
+    }
+
+    // Funciones para alternar entre menús
+    function switchSubMenu(target) {
+      const mainPanel = document.getElementById('mainLicensesPanel');
+      const devicePanel = document.getElementById('deviceInfoPanel');
+
+      if (target === 'device') {
+        mainPanel.classList.add('hidden');
+        devicePanel.classList.remove('hidden');
+        loadDeviceTelemetry();
+      } else {
+        devicePanel.classList.add('hidden');
+        mainPanel.classList.remove('hidden');
+      }
+    }
+
+    // Obtener información de red, batería y hardware del dispositivo
+    async function loadDeviceTelemetry() {
+      // 1. IP pública usando un servicio gratuito rápido
+      try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        document.getElementById('infoIp').innerText = data.ip;
+      } catch (err) {
+        document.getElementById('infoIp').innerText = 'Unavailable (Offline/CORS)';
+      }
+
+      // 2. Información del Navegador / Sistema / Android
+      const ua = navigator.userAgent;
+      document.getElementById('infoUserAgent').innerText = ua;
+      
+      let platformStr = navigator.platform || 'Unknown Platform';
+      let osVersionStr = 'Not Specified';
+
+      if (/android/i.test(ua)) {
+        platformStr = 'Android Mobile Device';
+        const match = ua.match(/Android\s([0-9\.]+)/);
+        if (match) osVersionStr = `Android ${match[1]}`;
+      } else if (/iphone|ipad|ipod/i.test(ua)) {
+        platformStr = 'iOS Device';
+        const match = ua.match(/OS\s([0-9_]+)/);
+        if (match) osVersionStr = `iOS ${match[1].replace(/_/g, '.')}`;
+      } else if (/win/i.test(ua)) {
+        platformStr = 'Windows Desktop';
+        osVersionStr = 'Windows NT';
+      } else if (/mac/i.test(ua)) {
+        platformStr = 'MacOS Desktop';
+        osVersionStr = 'Mac OS X';
+      }
+
+      document.getElementById('infoPlatform').innerText = platformStr;
+      document.getElementById('infoOsVersion').innerText = osVersionStr;
+
+      // 3. Conectividad de red
+      const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      if (conn) {
+        document.getElementById('infoConnectionType').innerText = `${conn.effectiveType ? conn.effectiveType.toUpperCase() : 'Unknown'} (${conn.downlink ? conn.downlink + ' Mbps' : 'N/A'})`;
+      } else {
+        document.getElementById('infoConnectionType').innerText = 'Standard Broadband/Mobile';
+      }
+
+      // 4. Batería (si el navegador soporta Battery API)
+      if (navigator.getBattery) {
+        try {
+          const battery = await navigator.getBattery();
+          updateBatteryUI(battery);
+          battery.addEventListener('levelchange', () => updateBatteryUI(battery));
+          battery.addEventListener('chargingchange', () => updateBatteryUI(battery));
+        } catch (e) {
+          document.getElementById('infoBatteryLevel').innerText = 'Restricted by browser security';
+          document.getElementById('infoBatteryCharging').innerText = 'N/A';
+        }
+      } else {
+        document.getElementById('infoBatteryLevel').innerText = 'Not supported in this browser view';
+        document.getElementById('infoBatteryCharging').innerText = 'N/A';
+      }
+    }
+
+    function updateBatteryUI(battery) {
+      const levelPercent = Math.round(battery.level * 100);
+      document.getElementById('infoBatteryLevel').innerText = `${levelPercent}% remaining`;
+      document.getElementById('infoBatteryCharging').innerText = battery.charging ? '⚡ Charging (Connected)' : '🔋 Discharging (On Battery)';
     }
 
     function openModal() { document.getElementById('addModal').classList.remove('hidden'); }
